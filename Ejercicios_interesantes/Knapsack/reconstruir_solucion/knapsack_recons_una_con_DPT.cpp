@@ -36,7 +36,14 @@ int main(){
   int capacidad = 9;
   int cantItems = N - 1;
   int res = f(cantItems, capacidad);
-  cout << res << endl;
+  cout << "Los pesos de los items de la mochila son:" << "\n";
+  for (int elem : P) cout << elem << "kg ";
+  cout << "\n";
+  cout << "Los beneficios que aporta cada item son: " << "\n";
+  for (int elem : B) cout << elem << "$ ";
+  cout << "\n";
+  cout << "El optimo de beneficio posible utilizando " << N << " items con restriccion de capacidad " << capacidad << "kg es: " << res << "$\n";
+  cout << "La Dynamic Programming table es:" << endl;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < 15; j++) {
       cout << DPT[i][j] << " ";
@@ -80,6 +87,7 @@ int main(){
       //dejo el peso como esta, ya que no se eligio el item actual en el camino optimo
     }
   }
+  cout << "Una solucion optima es usar los elementos: ";
   for (int i = 0; i < optimo.size(); i++) cout << optimo[i] << " ";
-  cout << endl;
+  cout << "con capacidad restante en la mochila de " << (p - optimo[0] * P[0]) << "kg\n";
 }

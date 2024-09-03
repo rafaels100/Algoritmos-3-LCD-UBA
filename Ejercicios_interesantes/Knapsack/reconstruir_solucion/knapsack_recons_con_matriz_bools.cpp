@@ -43,11 +43,10 @@ int solu[N_] = {0};
 int cant_sols = 0;
 void g(int i, int j){
   if (i == -1) {
-    for (int elem : solu) {
-      cout << elem << " ";
-    }
-    cout << endl;
     cant_sols++;
+    cout << "La solucion numero " << cant_sols << " es usar los elementos: ";
+    for (int i = 0; i < N; i++) cout << solu[i] << " ";
+    cout << endl;
     return;
   }
   //hubo un empate entre los nodos, ambos caminos llevan a soluciones optimas
@@ -74,7 +73,14 @@ int main(){
   int capacidad = 9;
   int cantItems = N - 1;
   int res = f(cantItems, capacidad);
-  cout << res << endl;
+  cout << "Los pesos de los items de la mochila son:" << "\n";
+  for (int elem : P) cout << elem << "kg ";
+  cout << "\n";
+  cout << "Los beneficios que aporta cada item son: " << "\n";
+  for (int elem : B) cout << elem << "$ ";
+  cout << "\n";
+  cout << "El optimo de beneficio posible utilizando " << N << " items con restriccion de capacidad " << capacidad << "kg es: " << res << "$\n";
+  cout << "La Dynamic Programming table es:" << endl;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < 15; j++) {
       cout << DPT[i][j] << " ";
@@ -82,6 +88,7 @@ int main(){
     cout << endl;
   }
   cout << endl;
+  cout << "La matriz de decisiones es: " << endl;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < 15; j++) {
       cout << deci[i][j] << " ";
@@ -100,6 +107,5 @@ int main(){
   si encuentra un 0, toma la rama izquierda (no tomo el item), y si encuentra un -1, toma ambos caminos (hay empate entre los nodos).
   */
   g(cantItems, capacidad);
-  cout << "cantidad de soluciones " << cant_sols << endl;
   return 0;
 }

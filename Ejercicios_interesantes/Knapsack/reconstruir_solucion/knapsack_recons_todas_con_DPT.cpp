@@ -32,13 +32,16 @@ int f(int i, int j){
 }
 
 vector<bool> optimo(N, 0);
+int cant_sols = 0;
 void reconstr_sols(int i, int p){
   if (i == 0) {
+    cant_sols++;
     optimo[0] = (p >= P[0]) ? true : false; //si todavia nos quedaba lugar para meter el unico item que falta, lo debimos haber metido
     //si no nos quedaba lugar, entonces no lo elegimos, y seteamos false.
     //termino para no evaluar a la DPT con numeros negativos. Ya termine con todos los niveles del arbol invertido.
+    cout << "La solucion numero " << cant_sols << " es usar los elementos: ";
     for (int i = 0; i < optimo.size(); i++) cout << optimo[i] << " ";
-    cout << endl;
+    cout << "con capacidad restante en la mochila de " << (p - optimo[0] * P[0]) << "kg\n";
     return;
   }
   //si daba lo mismo cambiar de columna o no cambiar, significa que hay dos soluciones validas. Para ver si daba lo mismo o no, comparo 
@@ -73,7 +76,14 @@ int main(){
   int capacidad = 9;
   int cantItems = N - 1;
   int res = f(cantItems, capacidad);
-  cout << res << endl;
+  cout << "Los pesos de los items de la mochila son:" << "\n";
+  for (int elem : P) cout << elem << "kg ";
+  cout << "\n";
+  cout << "Los beneficios que aporta cada item son: " << "\n";
+  for (int elem : B) cout << elem << "$ ";
+  cout << "\n";
+  cout << "El optimo de beneficio posible utilizando " << N << " items con restriccion de capacidad " << capacidad << "kg es: " << res << "$\n";
+  cout << "La Dynamic Programming table es:" << endl;
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < 15; j++) {
       cout << DPT[i][j] << " ";
