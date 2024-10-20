@@ -1,0 +1,3 @@
+Cuando recorremos un grafo con DFS, es util pintarlo a medida que lo hacemos.
+Esta en blanco cuando aun no descubrimos ese nodo.
+

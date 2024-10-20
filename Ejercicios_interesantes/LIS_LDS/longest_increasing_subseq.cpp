@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 /*
@@ -7,6 +8,9 @@ IDEA:
 La idea es pararme en un lugar j del array y ver si puedo extender un LIS a partir de todos los i elementos anteriores a j.
 Puedo extender si para algun i perteneciente a [0 -> j), ocurre que s[j] > s[i]. Extiendo agarrando la solucion optima que tuve para i, y le sumo +1.
 Luego me fijo el maximo entre todos esas posibles soluciones que puedo extender.
+
+Asi obtengo, para cada posicion i del vector, el largo de la maxima subsecuencia que puedo crear si considero todos los elementos de [0->i].
+Para averiguar cual es el largo de la subsecuencia mas grande que puedo crear, calculo el maximo entre todos estos resultados, estas soluciones optimas.
 */
 
 void LIS_BU(vector<int> &s){
@@ -26,6 +30,8 @@ void LIS_BU(vector<int> &s){
     }
   }
   for (int i = 0; i < s.size(); i++) cout << DPA[i] << " ";
+  cout << endl;
+  cout << "La subsecuencia creciente mas larga que existe en el array es: " << *max_element(DPA.begin(), DPA.end()) << endl;
   return;
 }
 /*
