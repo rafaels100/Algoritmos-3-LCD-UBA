@@ -14,10 +14,10 @@ Back edge: arista que esta en el grafo pero que no forma parte del arbol DFS.
 
 Las backedges aparecen cuando visitamos a un nodo que ya habiamos visto, que ya lo hicimos parte del arbol DFS. Como en las aristas de un grafo podemos ir y volver,
 no esta claro quien es el antecesor o sucesor. Ambos lo son, pero como vamos de abajo para arriba, decimos que es una backedge.
-Por esta razon no tenemos forward edges, ni cross edges.
 
-NOTAR que los digrafos admiten cross edges porque las edges no tienen doble direccion. Si asi fuera, al ir en profundidad por una rama, encontrariamos esa edge que
-esta conectando a la otra rama, y hariamos el salto ahi mismo, y toda esa rama pasaria a formar parte de la rama en profundidad actual.
+Encontrar una backedge, entonces, nos sirve para detectar ciclos en el digrafo, pues encontramos otro camino para llegar a un nodo, cuando ya conociamos otro.
+Puedo usar un stack para ir guardando el camino que fui recorriendo, y desarmar el stack para dar el camino del ciclo. Debo volver a armarlo una vez lo desestackee,
+para detectar nuevos ciclos en el futuro
 */
 
 grafo g = {
@@ -60,17 +60,26 @@ void DFS(grafo g, int nodo){
       //muestro el ciclo que encontre
       cout << "Se ha detectado un ciclo:" << endl;
       cout << "La cantidad de nodos stackeados es: " << stk.size() << endl;
+      vector<int> desapilados;
+      cout << "El ciclo es: ";
       while (stk.top() != vecino) {
         cout << stk.top() << " ";
-        //stk.pop();
+        desapilados.push_back(stk.top());
+        stk.pop();
       }
       cout << stk.top() << endl;
-      //stk.pop();
+      //vuelvo a apilar a los desapilados, en sentido contrario a como los saque
+      for (int i = desapilados.size() - 1; i >= 0; i--) {
+        stk.push(desapilados[i]);
+      }
     }
   }
   t_f[nodo] = t;
   //finalizar de explorar un nodo tambien hace crecer en una unidad el tiempo
   t++;
+  //desapilo el nodo, una vez termine de explorarlo
+  cout << "Desapilo: " << stk.top() << endl;
+  stk.pop();
 }
 
 int main(){

@@ -1,6 +1,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
@@ -50,12 +51,12 @@ me ayuda a ver por que cierto tipo de aristas no aparecen en los grafos pero si 
 */
 
 digrafo g = {
-          {0, vector<int>{1, 2, 3}},
-          {1, vector<int>{2}},
-          {2, vector<int>{}},
-          {3, vector<int>{4, 5}},
-          {4, vector<int>{0, 2}},
-          {5, vector<int>{}}
+          {1, vector<int>{2, 3, 4}},
+          {2, vector<int>{3}},
+          {3, vector<int>{}},
+          {4, vector<int>{5, 6}},
+          {5, vector<int>{1, 3}},
+          {6, vector<int>{}}
           };
           
 vector<bool> visitados(g.size(), 0);
@@ -67,26 +68,43 @@ vector<pair<int, int>> cross_edges;
 int t = 0;
 vector<int> t_d(g.size(), -1);
 vector<int> t_f(g.size(), -1);
+stack<int> stk;
 void DFS(digrafo g, int nodo){
-  cout << nodo << " ";
-  visitados[nodo] = true;
+  //cout << nodo << " ";
+  visitados[nodo - 1] = true;
   //descubrimos al nodo actual en tiempo t
-  t_d[nodo] = t;
+  t_d[nodo - 1] = t;
   //e incrementamos en una unidad el tiempo. Es como si descubirlo nos llevara una unidad de tiempo
   t++;
+  //meto en el stack al nodo que acabo de descubrir
+  stk.push(nodo);
   for (int vecino : g[nodo]) {
-    if (!visitados[vecino]) {
-      padres[vecino] = nodo;
+    if (!visitados[vecino - 1]) {
+      padres[vecino - 1] = nodo;
       tree_edges.push_back(make_pair(nodo, vecino));
       DFS(g, vecino);
     }else{
-      if (t_f[vecino] == -1) { 
+      if (t_f[vecino - 1] == -1) { 
       //si el nodo al que estoy volviendo a visitar aun no ha finalizado su exploracion, entonces es un ancestro del nodo actual, y se trata de una backedge
       back_edges.push_back(make_pair(nodo, vecino));
+      cout << "Se ha detectado un ciclo:" << endl;
+      cout << "La cantidad de nodos stackeados es: " << stk.size() << endl;
+      vector<int> desapilados;
+      cout << "El ciclo es: ";
+      while (stk.top() != vecino) {
+        cout << stk.top() << " ";
+        desapilados.push_back(stk.top());
+        stk.pop();
+      }
+      cout << stk.top() << endl;
+      //vuelvo a apilar a los desapilados, en sentido contrario a como los saque
+      for (int i = desapilados.size() - 1; i >= 0; i--) {
+        stk.push(desapilados[i]);
+      }
       }else{
         //si el nodo al que estamos llegando ya habia finalizado su tiempo de exploracion (es negro), entonces puede ser forward edge o crossedge
         //depende de su tiempo de descubrimiento t_d
-        if (t_d[nodo] < t_d[vecino]) {
+        if (t_d[nodo - 1] < t_d[vecino - 1]) {
           //estamos viendo a un sucesor, al que pudimos llegar pero ya habia finalizado su exploracion. Por eso el tiempo de descubrimiento del nodo
           //actual es menor al tiempo del descubrimiento del nodo al que estamos llegando, pues ya lo vimos antes, pero no habiamos terminado de explorar al nodo actual
           forward_edges.push_back(make_pair(nodo, vecino));
@@ -99,17 +117,21 @@ void DFS(digrafo g, int nodo){
       }
     }
   }
-  t_f[nodo] = t;
+  t_f[nodo - 1] = t;
   //finalizar de explorar un nodo tambien hace crecer en una unidad el tiempo
   t++;
+  //desapilo el nodo, una vez termine de explorarlo
+  //cout << "Desapilo: " << stk.top() << endl;
+  stk.pop();
 }
 
 int main(){
-  padres[0] = 0;
-  DFS(g, 0);
+  //seteo la raiz en el nodo 1, que le asigno la posicion 0 del array
+  padres[0] = 1;
+  DFS(g, 1); //corro el DFS desde la raiz
   cout << endl;
   cout << "Los padres de cada nodo por DFS son:";
-  for (int i = 0; i < padres.size(); i++) cout << "(" << i << ", " << padres[i] << "), ";
+  for (int i = 0; i < padres.size(); i++) cout << "(" << i + 1 << ", " << padres[i] << "), ";
   cout << endl;
   cout << "Los tiempos de descubrimiento y de finalizacion de cada nodo por DFS son:";
   for (int i = 0; i < t_d.size(); i++) cout << "(" << t_d[i] << ", " << t_f[i] << "), ";

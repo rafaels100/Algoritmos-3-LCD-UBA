@@ -1,6 +1,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
@@ -67,13 +68,16 @@ vector<pair<int, int>> cross_edges;
 int t = 0;
 vector<int> t_d(g.size(), -1);
 vector<int> t_f(g.size(), -1);
+stack<int> stk;
 void DFS(digrafo g, int nodo){
-  cout << nodo << " ";
+  //cout << nodo << " ";
   visitados[nodo] = true;
   //descubrimos al nodo actual en tiempo t
   t_d[nodo] = t;
   //e incrementamos en una unidad el tiempo. Es como si descubirlo nos llevara una unidad de tiempo
   t++;
+  //meto en el stack al nodo que acabo de descubrir
+  stk.push(nodo);
   for (int vecino : g[nodo]) {
     if (!visitados[vecino]) {
       padres[vecino] = nodo;
@@ -83,6 +87,20 @@ void DFS(digrafo g, int nodo){
       if (t_f[vecino] == -1) { 
       //si el nodo al que estoy volviendo a visitar aun no ha finalizado su exploracion, entonces es un ancestro del nodo actual, y se trata de una backedge
       back_edges.push_back(make_pair(nodo, vecino));
+      cout << "Se ha detectado un ciclo:" << endl;
+      cout << "La cantidad de nodos stackeados es: " << stk.size() << endl;
+      vector<int> desapilados;
+      cout << "El ciclo es: ";
+      while (stk.top() != vecino) {
+        cout << stk.top() << " ";
+        desapilados.push_back(stk.top());
+        stk.pop();
+      }
+      cout << stk.top() << endl;
+      //vuelvo a apilar a los desapilados, en sentido contrario a como los saque
+      for (int i = desapilados.size() - 1; i >= 0; i--) {
+        stk.push(desapilados[i]);
+      }
       }else{
         //si el nodo al que estamos llegando ya habia finalizado su tiempo de exploracion (es negro), entonces puede ser forward edge o crossedge
         //depende de su tiempo de descubrimiento t_d
@@ -102,6 +120,9 @@ void DFS(digrafo g, int nodo){
   t_f[nodo] = t;
   //finalizar de explorar un nodo tambien hace crecer en una unidad el tiempo
   t++;
+  //desapilo el nodo, una vez termine de explorarlo
+  //cout << "Desapilo: " << stk.top() << endl;
+  stk.pop();
 }
 
 int main(){
